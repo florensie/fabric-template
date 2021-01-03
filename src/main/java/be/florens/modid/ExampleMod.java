@@ -1,4 +1,4 @@
-package net.fabricmc.example;
+package be.florens.modid;
 
 import net.fabricmc.api.ModInitializer;
 
