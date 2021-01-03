@@ -1,4 +1,4 @@
-name: build
+name: Build
 on: [pull_request, push]
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
       - name: Build
-        run: ./gradlew build remapSlimJar
+        run: ./gradlew build remapSlimJar --no-daemon --stacktrace
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:

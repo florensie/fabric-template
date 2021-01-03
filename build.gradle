@@ -128,7 +128,9 @@ curseforge {
 		}
 		addArtifact remapSlimJar
 	}
+
 	options {
+		debug = true
 		forgeGradleIntegration = false
 	}
 }
@@ -137,10 +139,10 @@ import com.modrinth.minotaur.TaskModrinthUpload
 
 task publishModrinth (type: TaskModrinthUpload) {
 	// Stored in ~/.gradle/gradle.properties
-	if (project.hasProperty('curseApiKey'))
+	if (project.hasProperty('modrinthApiKey'))
 		apiKey = project.curseApiKey
-	else if (System.getenv("CURSE_API_KEY") != null)
-		apiKey = System.getenv("CURSE_API_KEY")
+	else if (System.getenv("MODRINTH_API_KEY") != null)
+		apiKey = System.getenv("MODRINTH_API_KEY")
 	else
 		println 'No Modrinth API key found, \'modrinth\' tasks will not work'
 
