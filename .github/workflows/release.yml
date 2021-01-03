@@ -19,7 +19,7 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
       - name: Build
-        run: ./gradlew build remapSlimJar --no-daemon --stacktrace
+        run: ./gradlew build remapSlimJar --stacktrace
       - name: Get version from tag
         id: tag_name
         run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
@@ -41,10 +41,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create CurseForge release
-        run: ./gradlew curseforge --no-daemon --stacktrace
+        run: ./gradlew curseforge --stacktrace
         env:
           CURSE_API_TOKEN: ${{ secrets.CURSE_API_TOKEN }}
       - name: Create Modrinth release
-        run: ./gradlew publishModrinth --no-daemon --stacktrace
+        run: ./gradlew publishModrinth --stacktrace
         env:
           MODRINTH_API_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
