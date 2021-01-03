@@ -20,20 +20,23 @@ jobs:
         run: chmod +x ./gradlew
       - name: Build
         run: ./gradlew build remapSlimJar --no-daemon --stacktrace
+      - name: Get version from tag
+          id: tag_name
+          run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
       - name: Get Changelog Entry
         id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
           validation_depth: 10
-          version: ${{ github.ref }}
+          version: ${{ steps.tag_name.outputs.current_version }}
       - name: Create GitHub release
         id: create_gh_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.changelog_reader.outputs.version }}
+          release_name: Release ${{ steps.changelog_reader.outputs.version }}
           body: ${{ steps.changelog_reader.outputs.changes }}
           prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
           draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
