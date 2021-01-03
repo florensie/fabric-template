@@ -2,7 +2,7 @@ import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
 	id 'fabric-loom' version '0.5-SNAPSHOT'
-	id "com.github.fudge.forgedflowerloom" version "2.0.0"
+	id 'com.github.fudge.forgedflowerloom' version '2.0.0'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'maven-publish'
 }
@@ -71,11 +71,11 @@ tasks.remapJar {
 task remapStandaloneJar(type: RemapJarTask, dependsOn: jar) {
 	afterEvaluate {
 		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-		archiveName = "${archivesBaseName}-${version}-fat.jar"
 		addNestedDependencies = true
 	}
 }
 
+// TODO: also add modrinth support
 curseforge {
 	// Stored in ~/.gradle/gradle.properties
 	if (project.hasProperty('curseApiKey'))
