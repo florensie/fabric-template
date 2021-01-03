@@ -38,8 +38,8 @@ jobs:
           draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
           prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
           fail_on_unmatched_files: true
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create CurseForge release
         run: ./gradlew curseforge --no-daemon --stacktrace
         env:
