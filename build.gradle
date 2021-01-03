@@ -1,6 +1,9 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
 	id 'fabric-loom' version '0.5-SNAPSHOT'
 	id "com.github.fudge.forgedflowerloom" version "2.0.0"
+	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'maven-publish'
 }
 
@@ -55,6 +58,60 @@ java {
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
+	}
+}
+
+tasks.remapJar {
+	afterEvaluate {
+		addNestedDependencies = false
+		archiveClassifier.set("slim")
+	}
+}
+
+task remapStandaloneJar(type: RemapJarTask, dependsOn: jar) {
+	afterEvaluate {
+		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+		archiveName = "${archivesBaseName}-${version}-fat.jar"
+		addNestedDependencies = true
+	}
+}
+
+curseforge {
+	// Stored in ~/.gradle/gradle.properties
+	if (project.hasProperty('curseApiKey'))
+		apiKey = project.curseApiKey
+	else if (System.getenv("CURSE_API_KEY") != null)
+		apiKey = System.getenv("CURSE_API_KEY")
+	else
+		println 'No CurseForge API key found, \'curseforge\' tasks will not work'
+
+	project {
+		id = project.curseforge_id
+		releaseType = 'release'
+
+		addGameVersion project.minecraft_version
+		addGameVersion 'Fabric'
+
+		changelogType = 'markdown'
+		changelog = '' // TODO: automatically get changelog for version
+
+		relations {
+			requiredDependency 'fabric-api'
+			// requiredDependency 'cloth-config'
+			// optionalDependency 'modmenu'
+		}
+
+		mainArtifact(remapStandaloneJar) {
+			displayName = "v$project.version"
+			relations {
+				// Override a relation if it's embedded
+				// embeddedLibrary 'cloth-config'
+			}
+		}
+		addArtifact remapJar
+	}
+	options {
+		forgeGradleIntegration = false
 	}
 }
 
