@@ -27,8 +27,7 @@ jobs:
         id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
         with:
-          validation_depth: 10
-          version: ${{ steps.tag_name.outputs.current_version }}
+          version: ${{ steps.tag_name.outputs.version }}
       - name: Create GitHub release
         id: create_gh_release
         uses: actions/create-release@v1
