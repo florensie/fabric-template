@@ -140,13 +140,12 @@ import com.modrinth.minotaur.TaskModrinthUpload
 task publishModrinth (type: TaskModrinthUpload) {
 	// Stored in ~/.gradle/gradle.properties
 	if (project.hasProperty('modrinthApiKey'))
-		apiKey = project.curseApiKey
+		token = project.curseApiKey
 	else if (System.getenv("MODRINTH_API_KEY") != null)
-		apiKey = System.getenv("MODRINTH_API_KEY")
+		token = System.getenv("MODRINTH_API_KEY")
 	else
 		println 'No Modrinth API key found, \'modrinth\' tasks will not work'
 
-	token = 'secret'
 	projectId = project.modrinth_id
 	versionNumber = project.version
 	uploadFile = remapJar
