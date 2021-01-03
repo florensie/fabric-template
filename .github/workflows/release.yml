@@ -21,8 +21,8 @@ jobs:
       - name: Build
         run: ./gradlew build remapSlimJar --no-daemon --stacktrace
       - name: Get version from tag
-          id: tag_name
-          run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
+        id: tag_name
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
       - name: Get Changelog Entry
         id: changelog_reader
         uses: mindsers/changelog-reader-action@v2
