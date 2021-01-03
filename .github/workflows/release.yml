@@ -21,11 +21,11 @@ jobs:
       - name: Build
         run: ./gradlew build remapSlimJar --no-daemon --stacktrace
       - name: Get Changelog Entry
-          id: changelog_reader
-          uses: mindsers/changelog-reader-action@v2
-          with:
-            validation_depth: 10
-            version: ${{ github.ref }}
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          validation_depth: 10
+          version: ${{ github.ref }}
       - name: Create GitHub release
         id: create_gh_release
         uses: actions/create-release@v1
