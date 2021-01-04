@@ -28,23 +28,41 @@ jobs:
         uses: mindsers/changelog-reader-action@v2
         with:
           version: ${{ steps.tag_name.outputs.version }}
-      - name: Write changelog to file
-        run: echo "${{ steps.changelog_reader.outputs.changes }}" > build/tmp/CHANGELOG.md
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           files: build/libs/*.jar
-          body_path: build/tmp/CHANGELOG.md
+          body: ${{ steps.changelog_reader.outputs.changes }}
           draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
           prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
           fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create CurseForge release
-        run: ./gradlew curseforge --stacktrace
-        env:
-          CURSE_API_KEY: ${{ secrets.CURSE_API_KEY }}
-#      - name: Create Modrinth release
-#        run: ./gradlew publishModrinth --stacktrace
-#        env:
-#          MODRINTH_API_KEY: ${{ secrets.MODRINTH_API_KEY }}
+        id: cf_base_release
+        uses: itsmeow/curseforge-upload@master
+        with:
+          token: ${{ secrets.CF_API_TOKEN }}
+          project_id: 401236
+          game_endpoint: minecraft
+          file_path: test-mod-${{ steps.changelog_reader.outputs.version }}.jar
+          changelog_type: markdown
+          changelog: ${{ steps.changelog_reader.outputs.changes }}
+          display_name: ${{ steps.changelog_reader.outputs.version }} for Minecraft 1.16.3-1.16.4
+          game_versions: 1.16.3,1.16.4,fabric
+          release_type: release
+          relations: fabric-api:requiredDependency
+      - name: Create CurseForge slim release
+        uses: itsmeow/curseforge-upload@master
+          with:
+            token: ${{ secrets.CF_API_TOKEN }}
+            project_id: 401236
+            game_endpoint: minecraft
+            parent_file_id: ${{ steps.cf_base_release.outputs.id }}
+            file_path: test-mod-${{ steps.changelog_reader.outputs.version }}-slim.jar
+            changelog_type: markdown
+            changelog: ${{ steps.changelog_reader.outputs.changes }}
+            display_name: ${{ steps.changelog_reader.outputs.version }} (slim) for Minecraft 1.16.3-1.16.4
+            game_versions: 1.16.3,1.16.4,fabric
+            release_type: release
+            relations: fabric-api:requiredDependency

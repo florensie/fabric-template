@@ -3,8 +3,6 @@ import net.fabricmc.loom.task.RemapJarTask
 plugins {
 	id 'fabric-loom' version '0.5-SNAPSHOT'
 	id 'com.github.fudge.forgedflowerloom' version '2.0.0'
-	id 'com.matthewprenger.cursegradle' version '1.4.0'
-	id 'com.modrinth.minotaur' version '1.1.0'
 	id 'maven-publish'
 }
 
@@ -90,71 +88,6 @@ task remapSlimJar(type: RemapJarTask, dependsOn: jar) {
 		archiveClassifier.set("slim")
 		addNestedDependencies = false
 	}
-}
-
-curseforge {
-	project {
-		// Stored in ~/.gradle/gradle.properties
-		if (project.hasProperty('curseApiKey'))
-			apiKey = project.curseApiKey
-		else if (System.getenv("CURSE_API_KEY") != null)
-			apiKey = System.getenv("CURSE_API_KEY")
-		else
-			println 'No CurseForge API key found, \'curseforge\' tasks will not work'
-
-		id = project.curseforge_id
-		releaseType = 'release'
-
-		addGameVersion project.minecraft_version
-		addGameVersion 'Fabric'
-
-		changelogType = 'markdown'
-		try {
-			changelog = new File("$buildDir/tmp/CHANGELOG.md").text
-		} catch (FileNotFoundException ignored) {}
-
-		relations {
-			requiredDependency 'fabric-api'
-			// requiredDependency 'cloth-config'
-			// optionalDependency 'modmenu'
-		}
-
-		mainArtifact(remapJar) {
-			displayName = "v$project.version"
-			relations {
-				// Override a relation if it's embedded
-				// embeddedLibrary 'cloth-config'
-			}
-		}
-		addArtifact remapSlimJar
-	}
-
-	options {
-		debug = true
-		forgeGradleIntegration = false
-	}
-}
-
-import com.modrinth.minotaur.TaskModrinthUpload
-
-task publishModrinth (type: TaskModrinthUpload) {
-	// Stored in ~/.gradle/gradle.properties
-	if (project.hasProperty('modrinthApiKey'))
-		token = project.curseApiKey
-	else if (System.getenv("MODRINTH_API_KEY") != null)
-		token = System.getenv("MODRINTH_API_KEY")
-	else
-		println 'No Modrinth API key found, \'modrinth\' tasks will not work'
-
-	projectId = project.modrinth_id
-	versionNumber = project.version
-	uploadFile = remapJar
-	addGameVersion project.minecraft_version
-	addLoader 'fabric'
-
-	try {
-		changelog = new File("$buildDir/tmp/CHANGELOG.md").text
-	} catch (FileNotFoundException ignored) {}
 }
 
 // configure the maven publication
