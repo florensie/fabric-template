@@ -39,7 +39,7 @@ jobs:
           token: ${{ secrets.CF_API_TOKEN }}
           project_id: 401236
           game_endpoint: minecraft
-          file_path: test-mod-${{ steps.changelog_reader.outputs.version }}.jar
+          file_path: build/libs/test-mod-${{ steps.changelog_reader.outputs.version }}.jar
           changelog_type: markdown
           changelog: ${{ steps.changelog_reader.outputs.changes }}
           display_name: ${{ steps.changelog_reader.outputs.version }} for Minecraft 1.16.3-1.16.4
@@ -52,7 +52,7 @@ jobs:
           project_id: 401236
           game_endpoint: minecraft
           parent_file_id: ${{ steps.cf_base_release.outputs.id }}
-          file_path: test-mod-${{ steps.changelog_reader.outputs.version }}-slim.jar
+          file_path: build/libs/test-mod-${{ steps.changelog_reader.outputs.version }}-slim.jar
           changelog_type: markdown
           changelog: ${{ steps.changelog_reader.outputs.changes }}
           display_name: ${{ steps.changelog_reader.outputs.version }} (slim) for Minecraft 1.16.3-1.16.4
