@@ -16,7 +16,7 @@ jobs:
       - name: Build
         uses: eskatos/gradle-command-action@v1
         with:
-          arguments: build remapSlimJar --stacktrace
+          arguments: build --stacktrace
       - name: Get version from tag
         id: tag_name
         run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
@@ -34,7 +34,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: itsmeow/curseforge-upload@v3
-        id: cf_base_release
         with:
           token: ${{ secrets.CF_API_TOKEN }}
           project_id: 401236
@@ -43,19 +42,6 @@ jobs:
           changelog_type: markdown
           changelog: ${{ steps.changelog_reader.outputs.changes }}
           display_name: ${{ steps.changelog_reader.outputs.version }} for Minecraft 1.16.3-1.16.4
-          game_versions: 1.16.3,1.16.4,fabric
-          release_type: release
-          relations: fabric-api:requiredDependency
-      - uses: itsmeow/curseforge-upload@v3
-        with:
-          token: ${{ secrets.CF_API_TOKEN }}
-          project_id: 401236
-          game_endpoint: minecraft
-          parent_file_id: ${{ steps.cf_base_release.outputs.id }}
-          file_path: build/libs/test-mod-${{ steps.changelog_reader.outputs.version }}-slim.jar
-          changelog_type: markdown
-          changelog: ${{ steps.changelog_reader.outputs.changes }}
-          display_name: ${{ steps.changelog_reader.outputs.version }} (slim) for Minecraft 1.16.3-1.16.4
           game_versions: 1.16.3,1.16.4,fabric
           release_type: release
           relations: fabric-api:requiredDependency
